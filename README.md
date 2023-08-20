@@ -1,1 +1,3 @@
-# agenda_telefonica2
+# agenda_telefonica
+# lista de contatos
+# lista de categoria
