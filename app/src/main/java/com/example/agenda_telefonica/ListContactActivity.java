@@ -15,33 +15,30 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import java.util.ArrayList;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 public class ListContactActivity extends AppCompatActivity {
 
-    private LinearLayout linearLayoutContacts;
+    private RecyclerView recyclerViewContacts;
     private DBContactHelper dbHelper;
-    ArrayList<Group> groupsList= new ArrayList<>();
-    DBGroupHelper dbGroup=new DBGroupHelper(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DBContactHelper DBContact = new DBContactHelper(this);
-        groupsList= dbGroup.getAllGroups();
-        dbHelper = new DBContactHelper(this);
         setContentView(R.layout.activity_list_contact);
-        linearLayoutContacts = findViewById(R.id.LinearLayoutContats);
+
+        dbHelper = new DBContactHelper(this);
+        recyclerViewContacts = findViewById(R.id.recyclerViewContacts);
+        recyclerViewContacts.setLayoutManager(new LinearLayoutManager(this));
+
         Button newContactEntryButton = findViewById(R.id.newContactButton);
-        newContactEntryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ListContactActivity.this, ContactActivity.class);
-                startActivity(intent);
-            }
+        newContactEntryButton.setOnClickListener(v -> {
+            Intent intent = new Intent(ListContactActivity.this, ContactActivity.class);
+            startActivity(intent);
         });
     }
-
 
     @Override
     protected void onResume() {
@@ -50,14 +47,12 @@ public class ListContactActivity extends AppCompatActivity {
     }
 
     private void reloadContactData() {
-        linearLayoutContacts.removeAllViews();
         ArrayList<Contact> contacts = dbHelper.getAllContacts();
-
         ContactListAdapter adapter = new ContactListAdapter(this, contacts, dbHelper);
-        int count=0;
-        for (Contact contact : contacts) {
-            linearLayoutContacts.addView(adapter.getView(count, null, linearLayoutContacts));
-            count++;
-        }
+        recyclerViewContacts.setAdapter(adapter);
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }

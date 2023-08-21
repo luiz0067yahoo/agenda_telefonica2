@@ -1,38 +1,42 @@
 package com.example.agenda_telefonica;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.GridView;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
-
-
-
 public class ListGroupActivity extends AppCompatActivity {
 
-
+    private RecyclerView recyclerViewGroups;
+    private DBGroupHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_list_group);
 
+        dbHelper = new DBGroupHelper(this);
+        recyclerViewGroups = findViewById(R.id.recyclerViewGroups);
+        recyclerViewGroups.setLayoutManager(new LinearLayoutManager(this));
+
         Button newGroupEntryButton = findViewById(R.id.newGroupButton);
-        newGroupEntryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ListGroupActivity.this, GroupActivity.class);
-                startActivity(intent);
-            }
+        newGroupEntryButton.setOnClickListener(v -> {
+            Intent intent = new Intent(ListGroupActivity.this, GroupActivity.class);
+            startActivity(intent);
         });
     }
 
@@ -43,16 +47,12 @@ public class ListGroupActivity extends AppCompatActivity {
     }
 
     private void reloadGroupData() {
-        DBGroupHelper dbHelper = new DBGroupHelper(this);
-        LinearLayout linearLayoutContacts = findViewById(R.id.LinearLayoutGroups);
-        linearLayoutContacts.removeAllViews();
         ArrayList<Group> groups = dbHelper.getAllGroups();
         GroupListAdapter adapter = new GroupListAdapter(this, groups, dbHelper);
-        int count=0;
-        for (Group group : groups) {
-            linearLayoutContacts.addView(adapter.getView(count, null, linearLayoutContacts));
-            count++;
-        }
+        recyclerViewGroups.setAdapter(adapter);
     }
 
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
 }
