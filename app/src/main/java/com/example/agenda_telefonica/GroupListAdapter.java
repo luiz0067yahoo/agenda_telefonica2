@@ -5,8 +5,8 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,9 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.ViewHolder> {
-    private Context context;
+
     private ArrayList<Group> groups;
     private DBGroupHelper dbHelper;
+    private Context context;
 
     public GroupListAdapter(Context context, ArrayList<Group> groups, DBGroupHelper dbHelper) {
         this.context = context;
@@ -26,8 +27,7 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
         this.dbHelper = dbHelper;
     }
 
-
-
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_item_group, parent, false);
@@ -38,20 +38,20 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Group group = groups.get(position);
 
-         holder.contactNameTextView.setText(group.getName());
+        holder.groupNameTextView.setText("NOME: "+group.getName());
 
         holder.editButton.setOnClickListener(v -> {
             Intent intent = new Intent(context, GroupActivity.class);
-            intent.putExtra("groupId", group.getId());
-            intent.putExtra("groupName", group.getName());
+            intent.putExtra("groupId", group.getId()); // id do grupo
+            intent.putExtra("groupName", group.getName()); // nome do grupo
             context.startActivity(intent);
         });
 
         holder.deleteButton.setOnClickListener(v -> {
             dbHelper.deleteGroup(group.getId());
             showToast(group.getName() + " excluído");
-            groups.remove(position);
-            notifyDataSetChanged();
+            groups.remove(holder.getAdapterPosition());
+            notifyItemRemoved(holder.getAdapterPosition());
         });
     }
 
@@ -61,19 +61,16 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.View
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView contactNameTextView;
-        // Outros elementos da view holder
+        TextView groupNameTextView;
 
         Button editButton;
         Button deleteButton;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            contactNameTextView = itemView.findViewById(R.id.cardContactName);
-            // Inicialize outros elementos da view holder
-
-            editButton = itemView.findViewById(R.id.editButtonContact);
-            deleteButton = itemView.findViewById(R.id.deleteButtonContact);
+            groupNameTextView = itemView.findViewById(R.id.cardGroupName);
+            editButton = itemView.findViewById(R.id.editButtonGroup);
+            deleteButton = itemView.findViewById(R.id.deleteButtonGroup);
         }
     }
 
