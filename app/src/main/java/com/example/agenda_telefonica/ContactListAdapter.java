@@ -41,7 +41,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
         holder.contactNameTextView.setText("NOME: "+contact.getName());
         holder.contactPhoneTextView.setText("TELEFONE: "+contact.getPhone());
         holder.contactGenderTextView.setText("SEXO: "+contact.getGender());
-        holder.contactGroupTextView.setText("GRUPO: "+contact.getName());
+        holder.contactGroupTextView.setText("GRUPO: "+contact.getNameGroup());
        if(contact.isFavorite()) {
             holder.contactFavoriteImageView.setImageResource(R.drawable.ic_star);
         }
